@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-pink: #FF0080;
+  --color-brand-purple: #7928CA;
+  --color-brand-blue: #4F46E5;
+  --color-brand-orange: #F59E0B;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    /* Proper Color Grading: Pink is now a primary driver */
+    background: 
+      radial-gradient(at 50% 0%, rgba(255, 0, 128, 0.3) 0%, transparent 50%),
+      radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.4) 0%, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.2) 0%, transparent 50%),
+      #7928CA; /* Deep Purple base to hold the grading together */
+    background-attachment: fixed;
+    @apply text-white antialiased min-h-screen;
+  }
+}
+
+/* Updated Glassmorphism: Clearer and more 'Crystal' like */
+@utility glass-vibrant {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(25px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.2);
+}
