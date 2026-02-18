@@ -27,7 +27,9 @@ export const NotificationProvider = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000");
+    const socket = io(
+      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000"
+    );
 
     socket.on("new_testimonial", (data) => {
       const newNotification: Notification = {
@@ -38,7 +40,9 @@ export const NotificationProvider = ({
         read: false,
       };
 
-      setNotifications((prev) => [newNotification, ...prev]);
+      setNotifications((prev) =>
+        [newNotification, ...prev] as Notification[]
+      );
     });
 
     socket.on("new_contact", (data) => {
@@ -50,7 +54,9 @@ export const NotificationProvider = ({
         read: false,
       };
 
-      setNotifications((prev) => [newNotification, ...prev]);
+      setNotifications((prev) =>
+        [newNotification, ...prev] as Notification[]
+      );
     });
 
     socket.on("new_booking", (data) => {
@@ -62,7 +68,9 @@ export const NotificationProvider = ({
         read: false,
       };
 
-      setNotifications((prev) => [newNotification, ...prev]);
+      setNotifications((prev) =>
+        [newNotification, ...prev] as Notification[]
+      );
     });
 
     return () => {
