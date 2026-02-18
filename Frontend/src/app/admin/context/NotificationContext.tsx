@@ -27,7 +27,7 @@ export const NotificationProvider = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000");
 
     socket.on("new_testimonial", (data) => {
       const newNotification: Notification = {
@@ -54,7 +54,7 @@ export const NotificationProvider = ({
     });
 
     socket.on("new_booking", (data) => {
-      const newNotification = {
+      const newNotification: Notification = {
         id: crypto.randomUUID(),
         type: "booking",
         message: `New booking from ${data.fullName}`,
@@ -62,9 +62,8 @@ export const NotificationProvider = ({
         read: false,
       };
 
-      setNotifications((prev) =>[newNotification, ...prev]);
+      setNotifications((prev) => [newNotification, ...prev]);
     });
-
 
     return () => {
       socket.disconnect();
