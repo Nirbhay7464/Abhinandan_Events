@@ -12,29 +12,54 @@ import {
 =============================== */
 export const submitEnquiry = async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, eventType, message } = req.body;
+    const { name, email, phone, eventType, message } = req.body as {
+      name: string;
+      email: string;
+      phone?: string;
+      eventType?: string;
+      message: string;
+    };
 
-    if (!name || !email || !message) {
+    // ✅ Basic validation
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
       return res.status(400).json({
         success: false,
         message: "Name, email and message are required",
       });
     }
 
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedMessage = message.trim();
+    const trimmedPhone = phone?.trim() || null;
+    const trimmedEventType = eventType?.trim() || null;
+
     // ✅ Save to DB
     await db.insert(enquiries).values({
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone || null,
-      eventType: eventType || null,
-      message: message.trim(),
+      name: trimmedName,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      eventType: trimmedEventType,
+      message: trimmedMessage,
     });
 
-    // ✅ Send notifications (non-blocking)
-    await Promise.all([
-      sendEmailNotification(name, email, phone, message),
-      sendWhatsAppNotification(name, email, phone, message),
-    ]);
+    // ✅ Send notifications (non-blocking safe)
+    Promise.all([
+      sendEmailNotification({
+        name: trimmedName,
+        email: trimmedEmail,
+        phone: trimmedPhone ?? undefined,
+        message: trimmedMessage,
+      }),
+      sendWhatsAppNotification({
+        name: trimmedName,
+        email: trimmedEmail,
+        phone: trimmedPhone ?? undefined,
+        message: trimmedMessage,
+      }),
+    ]).catch((err) => {
+      console.error("⚠️ Notification error:", err);
+    });
 
     return res.status(201).json({
       success: true,
@@ -59,10 +84,14 @@ export const getAllEnquiries = async (_req: Request, res: Response) => {
       .from(enquiries)
       .orderBy(desc(enquiries.createdAt));
 
-    return res.json(data);
+    return res.json({
+      success: true,
+      data,
+    });
   } catch (error) {
     console.error("❌ Get enquiries error:", error);
     return res.status(500).json({
+      success: false,
       message: "Failed to fetch enquiries",
     });
   }
