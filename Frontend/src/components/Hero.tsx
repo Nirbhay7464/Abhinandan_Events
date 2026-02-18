@@ -11,7 +11,8 @@ interface EventType {
 }
 
 const Hero = () => {
-  const containerRef = useRef<HTMLSectionElement>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
+
   const { scrollY } = useScroll();
 
   const textY = useTransform(scrollY, [0, 500], [0, 80]);
